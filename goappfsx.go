@@ -5,7 +5,7 @@ package goappfsx
 import (
 	"io/ioutil"
 	"os"
-	"path"
+	"path/filepath"
 )
 
 // DataCategory is an enumeration of the categories used in Windows to dileniate
@@ -34,7 +34,7 @@ func ExeDir() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return path.Dir(exePath), nil
+	return filepath.Dir(exePath), nil
 }
 
 // OpenFileExeDir returns a reference to an `os.File` given a path supplement to
@@ -45,7 +45,7 @@ func OpenFileExeDir(pathSupplement string) (*os.File, error) {
 	if err != nil {
 		return nil, err
 	}
-	fp := path.Join(ed, pathSupplement)
+	fp := filepath.Join(ed, pathSupplement)
 	fyle, err := os.Open(fp)
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func ReadFileExeDir(pathSupplement string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	out, err := ioutil.ReadFile(path.Join(ed, pathSupplement))
+	out, err := ioutil.ReadFile(filepath.Join(ed, pathSupplement))
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func WriteFileExeDir(pathSupplement string, data []byte) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	fyle, err := os.Create(path.Join(ed, pathSupplement))
+	fyle, err := os.Create(filepath.Join(ed, pathSupplement))
 	if err != nil {
 		return 0, err
 	}
@@ -90,15 +90,15 @@ func WriteFileExeDir(pathSupplement string, data []byte) (int, error) {
 // encountered directly to the caller.  If the directory doesn't yet exist, it
 // creates it prior to returning.
 func AppDataDir(category DataCategory) (string, error) {
-	progName := path.Base(os.Args[0])
-	progExt := path.Ext(progName)
+	progName := filepath.Base(os.Args[0])
+	progExt := filepath.Ext(progName)
 	progName = progName[:len(progName)-len(progExt)]
 
 	appDir, err := os.UserConfigDir()
 	if err != nil {
 		return "", err
 	}
-	appDir = path.Join(appDir, category.String(), progName)
+	appDir = filepath.Join(appDir, category.String(), progName)
 	os.MkdirAll(appDir, os.ModeDir)
 	return appDir, nil
 }
@@ -114,7 +114,7 @@ func OpenFileAppDataDir(pathSupplement string, category DataCategory) (*os.File,
 	if err != nil {
 		return nil, err
 	}
-	fp := path.Join(add, pathSupplement)
+	fp := filepath.Join(add, pathSupplement)
 	fyle, err := os.Open(fp)
 	if err != nil {
 		return nil, err
@@ -133,7 +133,7 @@ func ReadFileAppDataDir(pathSupplement string, category DataCategory) ([]byte, e
 	if err != nil {
 		return nil, err
 	}
-	out, err := ioutil.ReadFile(path.Join(add, pathSupplement))
+	out, err := ioutil.ReadFile(filepath.Join(add, pathSupplement))
 	if err != nil {
 		return nil, err
 	}
@@ -149,7 +149,7 @@ func WriteFileAppDataDir(pathSupplement string, category DataCategory, data []by
 	if err != nil {
 		return 0, err
 	}
-	fyle, err := os.Create(path.Join(add, pathSupplement))
+	fyle, err := os.Create(filepath.Join(add, pathSupplement))
 	if err != nil {
 		return 0, err
 	}
