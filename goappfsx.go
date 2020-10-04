@@ -85,6 +85,29 @@ func WriteFileExeDir(pathSupplement string, data []byte) (int, error) {
 	return fyle.Write(data)
 }
 
+// RemoveFileExeDir removes a file at pathSupplement (the relative path to the
+// directory from the executable location).  If any error is encountered, it is
+// passed directly to the caller.
+func RemoveFileExeDir(pathSupplement string) error {
+	ed, err := ExeDir()
+	if err != nil {
+		return err
+	}
+	return os.Remove(filepath.Join(ed, pathSupplement))
+}
+
+// RemoveDirExeDir removes a directory and all its removable children at
+// pathSupplement (the relative path to the directory from the executable
+// location).  The first error encountered, if any, is passed directly to the
+// caller.
+func RemoveDirExeDir(pathSupplement string) error {
+	ed, err := ExeDir()
+	if err != nil {
+		return err
+	}
+	return os.RemoveAll(filepath.Join(ed, pathSupplement))
+}
+
 // AppDataDir returns the application directory within the current user's
 // configuration directory.  It wraps `os.UserConfigDir` and passes any errors
 // encountered directly to the caller.  If the directory doesn't yet exist, it
@@ -155,4 +178,27 @@ func WriteFileAppDataDir(pathSupplement string, category DataCategory, data []by
 	}
 	defer fyle.Close()
 	return fyle.Write(data)
+}
+
+// RemoveFileAppDataDir removes a file at pathSupplement (the relative path to the
+// directory from the application's config directory).  If any error is encountered, it is
+// passed directly to the caller.
+func RemoveFileAppDataDir(pathSupplement string, category DataCategory) error {
+	add, err := AppDataDir(category)
+	if err != nil {
+		return err
+	}
+	return os.Remove(filepath.Join(add, pathSupplement))
+}
+
+// RemoveDirAppDataDir removes a directory and all its removable children at
+// pathSupplement (the relative path to the directory from the application's
+// config directory).  The first error encountered, if any, is passed directly
+// to the caller.
+func RemoveDirAppDataDir(pathSupplement string, category DataCategory) error {
+	add, err := AppDataDir(category)
+	if err != nil {
+		return err
+	}
+	return os.RemoveAll(filepath.Join(add, pathSupplement))
 }
