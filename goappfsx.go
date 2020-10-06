@@ -121,6 +121,11 @@ func AppDataDir(category DataCategory) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	// Sometimes defaults to a specific category.  Adjust to root, then add
+	// desired category.
+	if filepath.Base(appDir) != "AppData" {
+		appDir = filepath.Dir(appDir)
+	}
 	appDir = filepath.Join(appDir, category.String(), progName)
 	os.MkdirAll(appDir, os.ModeDir)
 	return appDir, nil
